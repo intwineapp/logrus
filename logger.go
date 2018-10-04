@@ -10,12 +10,12 @@ import (
 
 const runtimeSkip = 2
 
-type logger struct {
+type Logger struct {
 	logger *logrus.Logger
 }
 
-// Logger interface
-type Logger interface {
+// Loggerer interface
+type Loggerer interface {
 	SetLogFormatter(formatter logrus.Formatter)
 	Debug(args ...interface{})
 	DebugWithFields(l interface{}, f Fields)
@@ -36,22 +36,22 @@ type Logger interface {
 type Fields logrus.Fields
 
 // New return a new Logger
-func New() Logger {
+func New() *Logger {
 	log := logrus.New()
-	logger := &logger{log}
+	logger := &Logger{log}
 	return logger
 }
 
-func (lg *logger) SetLogLevel(level logrus.Level) {
+func (lg *Logger) SetLogLevel(level logrus.Level) {
 	lg.logger.Level = level
 }
 
-func (lg *logger) SetLogFormatter(formatter logrus.Formatter) {
+func (lg *Logger) SetLogFormatter(formatter logrus.Formatter) {
 	lg.logger.Formatter = formatter
 }
 
 // Debug logs a message at level Debug on the standard logger.
-func (lg *logger) Debug(args ...interface{}) {
+func (lg *Logger) Debug(args ...interface{}) {
 	if lg.logger.Level >= logrus.DebugLevel {
 		entry := lg.logger.WithFields(logrus.Fields{})
 		entry.Data["file"] = lg.fileInfo()
@@ -60,7 +60,7 @@ func (lg *logger) Debug(args ...interface{}) {
 }
 
 // DebugWithFields logs a message with fields at level Debug on the standard logger.
-func (lg *logger) DebugWithFields(l interface{}, f Fields) {
+func (lg *Logger) DebugWithFields(l interface{}, f Fields) {
 	if lg.logger.Level >= logrus.DebugLevel {
 		entry := lg.logger.WithFields(logrus.Fields(f))
 		entry.Data["file"] = lg.fileInfo()
@@ -69,7 +69,7 @@ func (lg *logger) DebugWithFields(l interface{}, f Fields) {
 }
 
 // Info logs a message at level Info on the standard logger.
-func (lg *logger) Info(args ...interface{}) {
+func (lg *Logger) Info(args ...interface{}) {
 	if lg.logger.Level >= logrus.InfoLevel {
 		entry := lg.logger.WithFields(logrus.Fields{})
 		entry.Data["file"] = lg.fileInfo()
@@ -78,7 +78,7 @@ func (lg *logger) Info(args ...interface{}) {
 }
 
 // InfoWithFields logs a message with fields at level Info on the standard logger.
-func (lg *logger) InfoWithFields(l interface{}, f Fields) {
+func (lg *Logger) InfoWithFields(l interface{}, f Fields) {
 	if lg.logger.Level >= logrus.InfoLevel {
 		entry := lg.logger.WithFields(logrus.Fields(f))
 		entry.Data["file"] = lg.fileInfo()
@@ -87,7 +87,7 @@ func (lg *logger) InfoWithFields(l interface{}, f Fields) {
 }
 
 // Warn logs a message at level Warn on the standard logger.
-func (lg *logger) Warn(args ...interface{}) {
+func (lg *Logger) Warn(args ...interface{}) {
 	if lg.logger.Level >= logrus.WarnLevel {
 		entry := lg.logger.WithFields(logrus.Fields{})
 		entry.Data["file"] = lg.fileInfo()
@@ -96,7 +96,7 @@ func (lg *logger) Warn(args ...interface{}) {
 }
 
 // WarnWithFields logs a message with fields at level Warn on the standard logger.
-func (lg *logger) WarnWithFields(l interface{}, f Fields) {
+func (lg *Logger) WarnWithFields(l interface{}, f Fields) {
 	if lg.logger.Level >= logrus.WarnLevel {
 		entry := lg.logger.WithFields(logrus.Fields(f))
 		entry.Data["file"] = lg.fileInfo()
@@ -105,7 +105,7 @@ func (lg *logger) WarnWithFields(l interface{}, f Fields) {
 }
 
 // Error logs a message at level Error on the standard logger.
-func (lg *logger) Error(args ...interface{}) {
+func (lg *Logger) Error(args ...interface{}) {
 	if lg.logger.Level >= logrus.ErrorLevel {
 		entry := lg.logger.WithFields(logrus.Fields{})
 		entry.Data["file"] = lg.fileInfo()
@@ -114,7 +114,7 @@ func (lg *logger) Error(args ...interface{}) {
 }
 
 // ErrorWithFields logs a message with fields at level Error on the standard logger.
-func (lg *logger) ErrorWithFields(l interface{}, f Fields) {
+func (lg *Logger) ErrorWithFields(l interface{}, f Fields) {
 	if lg.logger.Level >= logrus.ErrorLevel {
 		entry := lg.logger.WithFields(logrus.Fields(f))
 		entry.Data["file"] = lg.fileInfo()
@@ -123,7 +123,7 @@ func (lg *logger) ErrorWithFields(l interface{}, f Fields) {
 }
 
 // Fatal logs a message at level Fatal on the standard logger.
-func (lg *logger) Fatal(args ...interface{}) {
+func (lg *Logger) Fatal(args ...interface{}) {
 	if lg.logger.Level >= logrus.FatalLevel {
 		entry := lg.logger.WithFields(logrus.Fields{})
 		entry.Data["file"] = lg.fileInfo()
@@ -132,7 +132,7 @@ func (lg *logger) Fatal(args ...interface{}) {
 }
 
 // FatalWithFields logs a message with fields at level Fatal on the standard logger.
-func (lg *logger) FatalWithFields(l interface{}, f Fields) {
+func (lg *Logger) FatalWithFields(l interface{}, f Fields) {
 	if lg.logger.Level >= logrus.FatalLevel {
 		entry := lg.logger.WithFields(logrus.Fields(f))
 		entry.Data["file"] = lg.fileInfo()
@@ -141,7 +141,7 @@ func (lg *logger) FatalWithFields(l interface{}, f Fields) {
 }
 
 // Panic logs a message at level Panic on the standard logger.
-func (lg *logger) Panic(args ...interface{}) {
+func (lg *Logger) Panic(args ...interface{}) {
 	if lg.logger.Level >= logrus.PanicLevel {
 		entry := lg.logger.WithFields(logrus.Fields{})
 		entry.Data["file"] = lg.fileInfo()
@@ -150,7 +150,7 @@ func (lg *logger) Panic(args ...interface{}) {
 }
 
 // PanicWithFields logs a message with fields at level Debug on the standard logger.
-func (lg *logger) PanicWithFields(l interface{}, f Fields) {
+func (lg *Logger) PanicWithFields(l interface{}, f Fields) {
 	if lg.logger.Level >= logrus.PanicLevel {
 		entry := lg.logger.WithFields(logrus.Fields(f))
 		entry.Data["file"] = lg.fileInfo()
@@ -159,12 +159,12 @@ func (lg *logger) PanicWithFields(l interface{}, f Fields) {
 }
 
 // GetLogrusLogger return the underlying logrus.Logger
-func (lg *logger) GetLogrusLogger() *logrus.Logger {
+func (lg *Logger) GetLogrusLogger() *logrus.Logger {
 	return lg.logger
 }
 
 // filInfo extract the fileInfo
-func (lg *logger) fileInfo() string {
+func (lg *Logger) fileInfo() string {
 	_, file, line, ok := runtime.Caller(runtimeSkip)
 	if !ok {
 		file = "<???>"
